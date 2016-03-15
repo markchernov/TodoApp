@@ -245,15 +245,25 @@ var assignListenersToUpdate = function() {
 
 
  var displayUser = function(list) {
-
-  console.log(list);   
-     
+ console.log(list); 
+        
   var user = document.createElement('h2');
 
   user.setAttribute("id", "user");
+     
+    /* if(list[0])  {*/
+     
+   
+
   user.innerHTML = list[0].username + " " + list[0].confirmation;   
   document.body.appendChild(user);
-
+         
+   /*}
+     
+     
+    else  {user.innerHTML = "Please verify your log in";   
+    document.body.appendChild(user);}
+     */
 
 
 };
