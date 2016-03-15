@@ -1,209 +1,296 @@
+onload = function () {
+    console.log("LOADED");
 
 
-
-onload = function() {
-	console.log("LOADED");
-    
-    
-	document.getElementById('btn')
-		.addEventListener('click', function(){
-			getData('/todos', /*function(data) {
+    document.getElementById('btn')
+        .addEventListener('click', function () {
+            getData('/todos',
+                /*function(data) {
 				document.getElementById('content')
 					.innerHTML = data;*/
-			displayList);
-		});
-    
-    
-    
-    
-	document.myForm.submit.addEventListener('click', postData);  // add event listener
+                displayList);
+        });
 
 
 
-}
+
+    document.myForm.submit.addEventListener('click', postData); // add event listener
 
 
 
-    var postData = function(e) {
- 			e.preventDefault();
-        
-      
-        
-        
-        
-        
-        var myDescription = document.getElementById('myForm').description.value;
-        
-        var myPriority = document.getElementById('myForm').priority.value;
-        
-        
-        var todoObject = { description: myDescription, priority: myPriority };
-        
-        console.log("This is my todoObject:    " + todoObject.description + " " + todoObject.priority);
-        
-        
-       // var jsonString = JSON.stringify(todoObject);
-        
-        verbData('POST', '/todos', displayList, todoObject);
-        
-        
-                     
-                     
-                     
-    }
-                
-      
+};
+
+
+
+var postData = function (e) {
+    e.preventDefault();
 
 
 
 
 
 
-var displayList = function(List) {
-    
-    
-    clearTableFunction();           // clear previous table
-    
+    var myDescription = document.getElementById('myForm').description.value;
 
-	var eventsList = List;
+    var myPriority = document.getElementById('myForm').priority.value;
 
-	var body = document.getElementById('body');
-	var table = document.createElement('table');
-	table.setAttribute('id', 'tableList');
-	var tbody = document.createElement('tbody');
 
-	var header = document.getElementById("content");
-	header.appendChild(table);
+    var todoObject = {
+        description: myDescription,
+        priority: myPriority
+    };
 
-	// document.body.appendChild(table);
-	table.appendChild(tbody);
-	for (var i = 0; i < eventsList.length; i++) {
-		if (i === 0) {
-			var rowOne = document.createElement('tr');
-			tbody.appendChild(rowOne);
-			var keys = [];                                  //  empty block
-			for ( var k in eventsList[i]) {
-				var thead = document.createElement('th');
-				rowOne.appendChild(thead);
-				thead.innerHTML = k;
-				keys.push(k);
-			}
-		}
-        
-		var row = document.createElement('tr');
-		tbody.appendChild(row);
-        
-        
-		for (var j = 0; j < keys.length; j++) {
-			var tdata = document.createElement('td');
-			row.appendChild(tdata);
-		
-			tdata.innerHTML = eventsList[i][keys[j]];
-            
-            
-             
-            
-		}
+    console.log("This is my todoObject:    " + todoObject.description + " " + todoObject.priority);
 
-        
-        var button = document.createElement('button');   //  to create a delete button
-            button.setAttribute("id", eventsList[i].id );
-            button.innerHTML = "Delete";
-            row.appendChild(button);
-            
-            var todoId = eventsList[i].id;
-        
-            //var todoObject = {id: todoId};
-        
-            document.getElementById(todoId).addEventListener('click', function(e) {   
-                                                             
-                                                             
-                                                             
-                                                             deleteData(e.target.id)
-                                                            
-                                                            
+
+    // var jsonString = JSON.stringify(todoObject);
+
+    verbData('POST', '/todos', displayList, todoObject);
+
+
+
+
+
+};
+
+
+
+
+
+
+
+
+var displayList = function (List) {
+
+
+    clearTableFunction(); // clear previous table
+
+
+    var eventsList = List;
+
+    var body = document.getElementById('body');
+    var table = document.createElement('table');
+    table.setAttribute('id', 'tableList');
+    var tbody = document.createElement('tbody');
+
+    var header = document.getElementById("content");
+    header.appendChild(table);
+
+    // document.body.appendChild(table);
+    table.appendChild(tbody);
+    for (var i = 0; i < eventsList.length; i++) {
+        if (i === 0) {
+            var rowOne = document.createElement('tr');
+            tbody.appendChild(rowOne);
+            var keys = []; //  empty block
+            for (var k in eventsList[i]) {
+                var thead = document.createElement('th');
+                rowOne.appendChild(thead);
+                thead.innerHTML = k;
+                keys.push(k);
             }
-                                                            
-                                                            );
+        }
+
+        var row = document.createElement('tr');
+        tbody.appendChild(row);
+
+
+        for (var j = 0; j < keys.length; j++) {
+            var tdata = document.createElement('td');
+            row.appendChild(tdata);
+
+            tdata.innerHTML = eventsList[i][keys[j]];
+
+
+
+
+        }
+
+        // ---- create delete button in a loop
+
+        var button = document.createElement('button'); //  to create a delete button
+        button.setAttribute("id", eventsList[i].id);
+        button.innerHTML = "Delete";
+        row.appendChild(button);
+
+        var todoId = eventsList[i].id;
+
+        // ---- create update form in a loop
+
+        var form = document.createElement('form');
+
+        form.setAttribute("formId", todoId);
+        form.setAttribute("name", todoId);
+
+        var inputDescription = document.createElement('input');
+
+        inputDescription.setAttribute("type", "text");
+        inputDescription.setAttribute("name", "description");
+        inputDescription.setAttribute("value", eventsList[i].description);
+
+        var inputPriority = document.createElement('input');
+
+        inputPriority.setAttribute("type", "text");
+        inputPriority.setAttribute("name", "priority");
+        inputPriority.setAttribute("value", eventsList[i].priority);
+
+        var inputType = document.createElement('input');
+
+        inputType.setAttribute("type", "submit");
+        inputType.setAttribute("value", "UPDATE TODO");
+
+
+
+
+        /*form.appendChild(inputDescription);
+        form.appendChild(inputPriority);
+        form.appendChild(inputType);*/
         
-            
-	}
+        row.appendChild(inputDescription);
+        row.appendChild(inputPriority);
+        row.appendChild(inputType);
 
-};  
+        //row.appendChild(form);
+        
+        
+        
+       
 
+        console.log(form);
 
-
-
-
-
-       var deleteData = function(todoId)   {
-
-           
-       console.log(' In deleteData Function  ');
-           
-       var todoObject = {id: todoId};   
-           
-           
-       verbData('DELETE', '/delete' , displayList, todoObject);
-
-
-
-       };
+        /* <form name="myForm" id= "myForm">
+         Description:<br>
+		<input type="text" name="description" value="Work"/>
+         <br>Priority:<br>
+        <input type="text" name="priority" value="1"/>
+        <br>
+		<input type="submit" name="submit" value="SAVE TODO" />
+	     </form>
+        */
 
 
 
 
-function getData(url, callback) {                                     //get
-	var xhr = new XMLHttpRequest();
-	xhr.open('GET', url);
+        document.getElementById(todoId).addEventListener('click', function (e) {
+            deleteData(e.target.id)
+        });
 
-	xhr.onreadystatechange = function() {
-		if (xhr.status < 400 && xhr.readyState == 4) {
-			console.log(xhr.responseText);
-			/*callback(JSON.parse(xhr.responseText).data);*/
+         /*document.getElementsByName(todoId)[i].addEventListener('click', function (e) {     
+            updateData(e.target.formId,e.target.description,e.target.priority )
+        });*/
+
+        /*document.getElementById(todoId).addEventListener('click', function (e) {
+            updateData(e.target.formId,e.target.description,e.target.priority )
+        });*/
+
+
+    }
+
+};
+
+
+
+
+
+
+var deleteData = function (todoId) {
+
+
+    console.log(' In deleteData Function  ');
+
+    var todoObject = {
+        id: todoId
+    };
+
+
+    verbData('DELETE', '/delete', displayList, todoObject);
+
+
+
+};
+
+
+var updateData = function (todoId, description,priority) {
+
+
+    console.log(' In updateData Function  ');
+
+    var todoObject = {
+        id: todoId,
+        description: description,
+        priority: priority
+    };
+
+
+    verbData('DELETE', '/delete', displayList, todoObject);
+
+
+
+};
+
+
+
+
+
+
+
+
+
+function getData(url, callback) { //get
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url);
+
+    xhr.onreadystatechange = function () {
+        if (xhr.status < 400 && xhr.readyState == 4) {
+            console.log(xhr.responseText);
+            /*callback(JSON.parse(xhr.responseText).data);*/
             callback(JSON.parse(xhr.responseText).data);
-		}
-	};
+        }
+    };
 
-	xhr.send(null);
+    xhr.send(null);
 }
 
-function verbData(method, url, callback, obj) {                        //put, post, delete
-	var xhr = new XMLHttpRequest();
-	xhr.open(method, url);
 
-	if (obj) {
-		xhr.setRequestHeader('Content-Type', 'application/json');
-	}
 
-	xhr.onreadystatechange = function() {
-		if (xhr.status < 400 && xhr.readyState == 4) {
-			console.log(xhr.responseText);
-			if (callback) {
-				callback(JSON.parse(xhr.responseText).data);
+
+function verbData(method, url, callback, obj) { //put, post, delete
+    var xhr = new XMLHttpRequest();
+    xhr.open(method, url);
+
+    if (obj) {
+        xhr.setRequestHeader('Content-Type', 'application/json');
+    }
+
+    xhr.onreadystatechange = function () {
+        if (xhr.status < 400 && xhr.readyState == 4) {
+            console.log(xhr.responseText);
+            if (callback) {
+                callback(JSON.parse(xhr.responseText).data);
                 getData('/todos', displayList);
-			}
-		}
-	};
+            }
+        }
+    };
 
-	if (obj) {
-		xhr.send(JSON.stringify(obj));
-	} else {
-		xhr.send(null);
-	}
+    if (obj) {
+        xhr.send(JSON.stringify(obj));
+    } else {
+        xhr.send(null);
+    }
 }
 
 
 
 
-    var clearTableFunction = function () {
+var clearTableFunction = function () {
 
-        console.log("in clear table function");
+    console.log("in clear table function");
 
-        if (document.getElementById("tableList")) {
+    if (document.getElementById("tableList")) {
 
-            var myTable = document.getElementById("tableList");
+        var myTable = document.getElementById("tableList");
 
-            myTable.parentNode.removeChild(myTable);
+        myTable.parentNode.removeChild(myTable);
 
-        }};
+    }
+};
