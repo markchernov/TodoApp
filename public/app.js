@@ -117,46 +117,49 @@ var displayList = function (List) {
 
         // ---- create update form in a loop
 
-        var form = document.createElement('form');
+        /*var form = document.createElement('form');
 
         form.setAttribute("formId", todoId);
-        form.setAttribute("name", todoId);
+        form.setAttribute("name", todoId);*/
 
         var inputDescription = document.createElement('input');
 
         inputDescription.setAttribute("type", "text");
         inputDescription.setAttribute("name", "description");
+        inputDescription.setAttribute("todoid", eventsList[i].id);
         inputDescription.setAttribute("value", eventsList[i].description);
 
         var inputPriority = document.createElement('input');
 
         inputPriority.setAttribute("type", "text");
         inputPriority.setAttribute("name", "priority");
+        inputPriority.setAttribute("todoid", eventsList[i].id);
         inputPriority.setAttribute("value", eventsList[i].priority);
 
         var inputType = document.createElement('input');
 
         inputType.setAttribute("type", "submit");
+        inputType.setAttribute("todoid", eventsList[i].id);
         inputType.setAttribute("value", "UPDATE TODO");
-
+        inputType.setAttribute("name", "updateButton");
 
 
 
         /*form.appendChild(inputDescription);
         form.appendChild(inputPriority);
         form.appendChild(inputType);*/
-        
+
         row.appendChild(inputDescription);
         row.appendChild(inputPriority);
         row.appendChild(inputType);
 
         //row.appendChild(form);
-        
-        
-        
-       
 
-        console.log(form);
+
+
+
+
+        //console.log(form);
 
         /* <form name="myForm" id= "myForm">
          Description:<br>
@@ -172,21 +175,52 @@ var displayList = function (List) {
 
 
         document.getElementById(todoId).addEventListener('click', function (e) {
-            deleteData(e.target.id)
+            deleteData(e.target.todoid)
         });
 
-         /*document.getElementsByName(todoId)[i].addEventListener('click', function (e) {     
-            updateData(e.target.formId,e.target.description,e.target.priority )
-        });*/
 
-        /*document.getElementById(todoId).addEventListener('click', function (e) {
-            updateData(e.target.formId,e.target.description,e.target.priority )
-        });*/
+
+
+
+
+    };
+
+    assignListenersToUpdate();
+
+}; // end display
+
+
+
+
+// ----------------------------  assigne listeners to update  buttons
+
+
+
+
+var assignListenersToUpdate = function() {
+
+    var updateButtons = document.getElementsByName("updateButton");
+
+    for (var m = 0; m < updateButtons.length; m++) {
+
+
+        updateButtons[m].addEventListener('click', function (e) {
+
+            updateData(e.target.getAttribute("todoid"));
+            console.log(e.target.getAttribute("todoid"));
+
+
+        });
+
 
 
     }
 
+
 };
+
+
+
 
 
 
@@ -210,19 +244,63 @@ var deleteData = function (todoId) {
 };
 
 
-var updateData = function (todoId, description,priority) {
+var updateData = function (id) {
 
 
-    console.log(' In updateData Function  ');
-
+    var todoid = id;
+    
+    
     var todoObject = {
-        id: todoId,
-        description: description,
-        priority: priority
+        id: todoid,
     };
 
 
-    verbData('DELETE', '/delete', displayList, todoObject);
+
+
+    var descriptions = document.getElementsByName("description");
+
+    for (var m = 0; m < descriptions.length; m++) {
+
+        if (descriptions[m].getAttribute("todoid") === todoid) {
+            todoObject.description = descriptions[m].value
+        }
+
+
+    }
+
+
+    var priorities = document.getElementsByName("priority");
+
+    for (var s = 0; s < descriptions.length; s++) {
+
+        if (priorities[s].getAttribute("todoid") === todoid) {
+            todoObject.priority = priorities[s].value
+        }
+
+
+    }
+
+
+
+
+
+
+
+
+    console.log(' In updateData Function  ');
+    console.log(' todoID argument:  ' + todoid);
+    
+
+
+
+
+
+
+
+
+    console.log("My PUT Object: " + todoObject.id, todoObject.description, todoObject.priority);
+
+    verbData('PUT', '/update', displayList, todoObject);
 
 
 
@@ -231,7 +309,7 @@ var updateData = function (todoId, description,priority) {
 
 
 
-
+// -------------------------------------  GET
 
 
 
@@ -251,7 +329,7 @@ function getData(url, callback) { //get
     xhr.send(null);
 }
 
-
+// ---------------------------------- POST PUT DELETE
 
 
 function verbData(method, url, callback, obj) { //put, post, delete
