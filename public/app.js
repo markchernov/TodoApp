@@ -17,7 +17,7 @@ onload = function () {
 
     document.loginForm.submit.addEventListener('click', logInFunction); // add event listener
 
-
+    document.getElementById("logout").addEventListener('click', logOutFunction); // add event listener
 
 };
 
@@ -77,7 +77,18 @@ var logInFunction = function (e) {
 
 };
 
+var logOutFunction = function (e) {
+    
+    
+    
+    e.preventDefault();
 
+    console.log("in log out function");
+    
+    
+     getData('/logout', displayUser);
+
+};
 
 
 
@@ -108,7 +119,7 @@ var displayList = function (List) {
             for (var k in eventsList[i]) {
                 var thead = document.createElement('th');
                 rowOne.appendChild(thead);
-                thead.innerHTML = k;
+                thead.innerHTML = k.toUpperCase();
                 keys.push(k);
             }
         }
@@ -251,19 +262,19 @@ var assignListenersToUpdate = function() {
 
   user.setAttribute("id", "user");
      
-    /* if(list[0])  {*/
+    if(list[0])  {
      
    
 
-  user.innerHTML = list[0].username + " " + list[0].confirmation;   
+  user.innerHTML = list[0].username.toUpperCase() + " " + list[0].confirmation.toUpperCase();   
   document.body.appendChild(user);
          
-   /*}
+   }
      
      
-    else  {user.innerHTML = "Please verify your log in";   
+    else  {user.innerHTML = "Log out was successful";   
     document.body.appendChild(user);}
-     */
+   
 
 
 };

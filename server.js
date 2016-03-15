@@ -61,12 +61,25 @@ app.get("/login", function (req, res) {
     res.render('index');
 });
 
-
-app.get("/logout", function (req, res) {
-    req.session.user = null;
-    res.render('index');
-});
 */
+app.get("/logout", function (req, res) {
+    
+    var sessionid = req.session.user;
+    
+     var returnObject = {
+        "id": sessionid,
+        "confirmation": "was logged out"
+    };
+    
+    req.session.user = null;
+    
+    res.send({
+                data: [returnObject]
+            })
+    
+    
+});
+
 
 app.use(session({
     resave: false,
@@ -137,7 +150,11 @@ app.listen(3000, function () {
 // --------------------------------- paths
 
 app.get('/todos', function (req, res) {
-    conn.query('SELECT * FROM todo', function (err, rows, fields) {
+    
+     var sessionId = req.session.user;
+     var myQuery = "SELECT * FROM todo WHERE userid= ?";   
+    
+    conn.query(myQuery,[sessionId], function (err, rows, fields) {
         if (err) {
             console.log("Something is amiss...");
             console.log(err);
@@ -162,8 +179,16 @@ app.post('/todos', function (req, res) {
         description: req.body.description,
         priority: req.body.priority
     };
+    
+    var sessionId = req.session.user;
+    var description = req.body.description;
+    var priority = req.body.priority;
+    
+    //'INSERT INTO todo (description, priority) VALUES("' + req.body.description + '","' + req.body.priority + '")'
+    
+    var myQuery = "INSERT INTO todo (description, priority,userid) VALUES(?,?,?)";   
 
-    conn.query('INSERT INTO todo (description, priority) VALUES("' + req.body.description + '","' + req.body.priority + '")', function (err, rows, fields) {
+    conn.query(myQuery, [description, priority, sessionId], function (err, rows, fields) {
         if (err) {
             console.log("Something is amiss...");
             console.log(err);
@@ -218,7 +243,7 @@ app.post('/user', function (req, res) {
                 "confirmation": "log in was successful"
             };
             
-            req.session.user = username;
+            req.session.user = rows[0].userid;      //   assigned returned user id to session user
 
             res.send({
                 data: [returnObject]
