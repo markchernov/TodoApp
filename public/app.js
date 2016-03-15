@@ -12,9 +12,10 @@ onload = function () {
         });
 
 
-
-
     document.myForm.submit.addEventListener('click', postData); // add event listener
+
+
+    document.loginForm.submit.addEventListener('click', logInFunction); // add event listener
 
 
 
@@ -54,6 +55,27 @@ var postData = function (e) {
 };
 
 
+var logInFunction = function (e) {
+    e.preventDefault();
+
+    var myusername = document.getElementById('loginForm').username.value;
+
+    var mypassword = document.getElementById('loginForm').password.value;
+
+
+    var userObject = {
+        username: myusername,
+        password: mypassword
+    };
+
+    console.log("This is my userObject:    " + userObject.username + " " + userObject.password);
+
+
+    // var jsonString = JSON.stringify(todoObject);
+
+    verbData('POST', '/user', displayUser, userObject);
+
+};
 
 
 
@@ -179,13 +201,15 @@ var displayList = function (List) {
         });
 
 
-
+       
 
 
 
     };
 
     assignListenersToUpdate();
+    
+    
 
 }; // end display
 
@@ -220,8 +244,19 @@ var assignListenersToUpdate = function() {
 };
 
 
+ var displayUser = function(list) {
+
+  console.log(list);   
+     
+  var user = document.createElement('h2');
+
+  user.setAttribute("id", "user");
+  user.innerHTML = list[0].username + " " + list[0].confirmation;   
+  document.body.appendChild(user);
 
 
+
+};
 
 
 

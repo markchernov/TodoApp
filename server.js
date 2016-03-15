@@ -13,23 +13,61 @@ app.use(cookieParser(credentials.cookieSecret));
 
 app.get("/signed", function(req,res){
     res.cookie('testCookie', {test : "test"}, {signed : true});
-    res.render('index');
+    res.render('index.html');
+    //res.send(req.cookies);
 });
 
 
 app.get('/allCookies', function(req, res) {
   console.log("Cookies: ", req.cookies)
+  res.send(req.cookies);
 });
 
 
 app.get('/allSignedCookies', function(req, res) {
   console.log("Cookies: ", req.signedCookies);
+  res.send(req.signedCookies);
 });
 
 
 app.get('/allSignedCookies', function(req,res) {
     console.log(req.signedCookies.testCookie);
+    res.send(req.signedCookies.testCookie);
 });
+
+
+
+// ---------------------------------------------------- sessions
+
+var session = require('express-session');
+
+
+app.use(session({
+    resave : false,
+    saveUninitialized : false,
+    secret : credentials.cookieSecret
+}));
+
+
+app.get("/login", function(req,res){
+    req.session.user = "Wombat";
+    res.render('index');
+});
+
+
+app.get("/logout", function(req,res){
+    req.session.user = null;
+    res.render('index');
+});
+
+app.use(session({
+    resave : false,
+    saveUninitialized : false,
+    secret : credentials.cookieSecret,
+    key : "user"
+}));
+
+
 
 
 
@@ -42,7 +80,7 @@ var conn = mysql.createConnection({
     host : 'localhost',
     user : 'root',
     password : 'root',
-    database : 'todo_rest'
+    database : 'todoapp'
 });
 
 
@@ -54,11 +92,19 @@ app.use(bodyParser.urlencoded({ extended: false }));
 conn.connect();
 
 
+// -----------------------------------------------------  handlebars views
+
+
+
 var handelbars = require('express-handlebars').create({defaultLayout: 'application'});
 
 
 app.engine('handlebars', handelbars.engine);
 app.set('view engine', 'handlebars');
+
+
+// -----------------------------------------------------  ROUTES
+
 
 
 
@@ -111,6 +157,53 @@ app.post('/todos', function(req,res) {
         }
     }); 
 });
+
+
+
+app.post('/user', function(req,res) {
+    
+    var username = req.body.username
+    var password = req.body.password
+    
+    
+    console.log(username);
+    console.log(password);
+    
+   var returnObject = {
+    username: username,
+    "confirmation": "log in was successful"
+};;
+    
+    
+    //var myQuery = "SELECT * FROM users WHERE username='" + username + "'AND password='" + password + "' ";
+
+    var myQuery = "SELECT * FROM users WHERE username= ? AND password=?";
+    
+    conn.query(myQuery, [username, password], function(err,rows,fields) {
+        if (err) {
+            console.log("Something is amiss...");
+            console.log(err);
+        } else {
+            
+            
+        
+            res.send({data: [returnObject]});
+            console.log({data : rows});
+        }
+    }); 
+});
+
+
+
+
+
+
+
+
+
+
+
+
 
 // ----------------------------------------------------DELETE
 app.delete('/delete', function (req, res) {
