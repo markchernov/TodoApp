@@ -86,6 +86,9 @@ var logOutFunction = function (e) {
     console.log("in log out function");
     
     
+   
+    
+    
      getData('/logout', displayUser);
 
 };
@@ -266,7 +269,7 @@ var assignListenersToUpdate = function() {
      
    
 
-  user.innerHTML = list[0].username.toUpperCase() + " " + list[0].confirmation.toUpperCase();   
+  user.innerHTML = list[0].username + " " + list[0].confirmation.toUpperCase();   
   document.body.appendChild(user);
          
    }

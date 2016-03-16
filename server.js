@@ -46,6 +46,15 @@ app.get('/allSignedCookies', function (req, res) {
 var session = require('express-session');
 
 
+app.use(session({
+    resave: false,
+    saveUninitialized: false,
+    secret: credentials.cookieSecret,
+    key: "user"
+}));
+
+
+
 /*
 app.use(session({
     resave: false,
@@ -66,12 +75,16 @@ app.get("/logout", function (req, res) {
     
     var sessionid = req.session.user;
     
+    console.log(sessionid);
+    
      var returnObject = {
-        "id": sessionid,
+        "username": sessionid,
         "confirmation": "was logged out"
     };
     
-    req.session.user = null;
+    delete req.session.user;
+    
+    //req.session.user = null;
     
     res.send({
                 data: [returnObject]
@@ -81,12 +94,7 @@ app.get("/logout", function (req, res) {
 });
 
 
-app.use(session({
-    resave: false,
-    saveUninitialized: false,
-    secret: credentials.cookieSecret,
-    key: "user"
-}));
+
 
 
 
@@ -281,6 +289,8 @@ app.post('/user', function (req, res) {
 app.delete('/delete', function (req, res) {
 
     var todoId = req.body.id;
+    
+    todoId = todoId.toString();
 
     console.log(todoId);
 
